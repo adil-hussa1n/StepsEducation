@@ -6,12 +6,12 @@ import { useTheme as useThemeContext } from '../context/ThemeContext';
  * Forwards the theme context values for backward compatibility
  */
 const useTheme = () => {
-  const { isDarkMode, toggleTheme } = useThemeContext();
+  const { darkMode, toggleTheme } = useThemeContext();
   
   return {
-    theme: isDarkMode ? 'dark' : 'light',
+    theme: darkMode ? 'dark' : 'light',
     toggleTheme,
-    isDarkMode,
+    isDarkMode: darkMode,
     themeObject: {
       colors: {
         primary: {

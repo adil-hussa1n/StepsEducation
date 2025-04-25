@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import useTheme from '../../hooks/useTheme';
+import { useTheme } from '../../context/ThemeContext';
 import ThemeToggle from '../common/ThemeToggle';
 
 const Navbar = ({ isVisible = true }) => {
@@ -161,4 +161,4 @@ const MobileNavLink = ({ to, children, onClick }) => (
   </Link>
 );
 
-export default Navbar; 
+export default Navbar;

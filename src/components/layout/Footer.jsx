@@ -5,7 +5,7 @@ import { ROUTES } from '../../constants/routes';
 import { useTheme } from '../../context/ThemeContext';
 
 const Footer = () => {
-  const { isDarkMode } = useTheme();
+  const { darkMode } = useTheme();
 
   const companyInfo = {
     name: 'STEPS Education Limited',
@@ -57,7 +57,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className={isDarkMode ? 'bg-gray-800 text-white' : 'bg-blue-900 text-white'}>
+    <footer className={darkMode ? 'bg-gray-800 text-white' : 'bg-blue-900 text-white'}>
       <div className="container mx-auto px-4 py-12">
         {/* Top Section */}
         <div className="flex flex-col md:flex-row justify-between mb-8">
@@ -78,7 +78,7 @@ const Footer = () => {
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`${isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-blue-800 hover:bg-blue-700'} p-2 rounded-full transition-colors`}
+                  className={`${darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-blue-800 hover:bg-blue-700'} p-2 rounded-full transition-colors`}
                   aria-label={social.platform}
                 >
                   {renderSocialIcon(social.platform)}
@@ -143,7 +143,7 @@ const Footer = () => {
         </div>
         
         {/* Copyright */}
-        <div className={`border-t ${isDarkMode ? 'border-gray-700' : 'border-blue-800'} mt-8 pt-6 text-center`}>
+        <div className={`border-t ${darkMode ? 'border-gray-700' : 'border-blue-800'} mt-8 pt-6 text-center`}>
           <p className="text-white">
             © {new Date().getFullYear()} STEPS Education Limited. All rights reserved.
           </p>

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useTheme } from '../../context/ThemeContext';
 
 const ThemeToggle = () => {
-  const { isDarkMode, toggleTheme } = useTheme();
+  const { darkMode, toggleTheme } = useTheme();
 
   const handleToggle = () => {
     toggleTheme();
@@ -16,12 +16,12 @@ const ThemeToggle = () => {
       transition={{ duration: 0.3 }}
       onClick={handleToggle}
       className="relative rounded-full w-12 h-6 bg-gradient-to-r from-indigo-400 to-blue-500 flex items-center p-1 shadow-inner overflow-hidden focus:outline-none"
-      aria-label={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
+      aria-label={`Switch to ${darkMode ? 'light' : 'dark'} mode`}
     >
       <motion.div
         className="absolute inset-0 opacity-20"
         animate={{ 
-          background: isDarkMode 
+          background: darkMode 
             ? 'linear-gradient(to right, #0f172a, #1e293b)' 
             : 'linear-gradient(to right, #3b82f6, #6366f1)' 
         }}
@@ -32,7 +32,7 @@ const ThemeToggle = () => {
       >
         {/* Sun Icon */}
         <svg 
-          className={`w-3 h-3 text-yellow-300 ${isDarkMode ? 'opacity-50' : 'opacity-100'}`} 
+          className={`w-3 h-3 text-yellow-300 ${darkMode ? 'opacity-50' : 'opacity-100'}`} 
           fill="currentColor" 
           viewBox="0 0 20 20"
         >
@@ -41,7 +41,7 @@ const ThemeToggle = () => {
         
         {/* Moon Icon */}
         <svg 
-          className={`w-3 h-3 text-white ${isDarkMode ? 'opacity-100' : 'opacity-50'}`} 
+          className={`w-3 h-3 text-white ${darkMode ? 'opacity-100' : 'opacity-50'}`} 
           fill="currentColor" 
           viewBox="0 0 20 20"
         >
@@ -52,7 +52,7 @@ const ThemeToggle = () => {
       <motion.div
         layout
         initial={false}
-        animate={{ x: isDarkMode ? '100%' : '0%' }}
+        animate={{ x: darkMode ? '100%' : '0%' }}
         transition={{ type: 'spring', stiffness: 500, damping: 30 }}
         className="w-4 h-4 bg-white rounded-full transform -translate-x-1"
       />
