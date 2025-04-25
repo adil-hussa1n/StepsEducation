@@ -5,15 +5,10 @@ import { resolve } from 'path'
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: 'build',
+    outDir: 'dist',
     rollupOptions: {
-      input: resolve(__dirname, 'index.html'),
-      external: ['react-router/dom']
+      input: resolve(__dirname, 'index.html')
     }
   },
-  resolve: {
-    alias: {
-      'react-router/dom': 'react-router-dom'
-    }
-  }
+  base: '/'
 })
