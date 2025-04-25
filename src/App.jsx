@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ROUTES } from './constants/routes';
-import useScrollToTop from './hooks/useScrollToTop'; // 👈 Import your hook
+import useScrollToTop from './useScrollToTop'; // 👈 Import your hook
 
 // Import your components
 import Home from './pages/Home';
