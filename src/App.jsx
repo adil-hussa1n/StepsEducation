@@ -1,6 +1,8 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ROUTES } from './constants/routes';
+import useScrollToTop from './hooks/useScrollToTop'; // 👈 Import your hook
+
 // Import your components
 import Home from './pages/Home';
 import Contact from './pages/Contact';
@@ -10,6 +12,8 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 
 function App() {
+  useScrollToTop(); // 👈 Call the hook here
+
   return (
     <div className="App">
       <Navbar />
