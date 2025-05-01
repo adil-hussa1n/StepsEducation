@@ -6,30 +6,30 @@ const BlogSection = () => {
   const blogPosts = [
     {
       id: 1,
-      title: 'UK Tier 4 Student Visa: 2023 Updates and Changes',
-      excerpt: 'Recent changes to the UK Tier 4 Student Visa application process and how they affect international students.',
-      date: 'Oct 15, 2023',
+      title: 'UK Student Visa: 2025 Updates and Requirements',
+      excerpt: 'Latest updates on UK student visa requirements, application process, and important changes for international students planning to study in the UK.',
+      date: 'Apr 15, 2025',
       category: 'Visa Updates',
-      image: 'https://images.unsplash.com/photo-1591692575450-74c699965a63?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      author: 'Mr. Mohsin'
+      image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      author: 'STEPS Education Team'
     },
     {
       id: 2,
-      title: '5 Tips for a Successful University Interview',
-      excerpt: 'Prepare for your university interview with these expert tips that will help you stand out from other applicants.',
-      date: 'Sep 28, 2023',
+      title: 'How to Prepare a Successful University Application',
+      excerpt: 'Expert guidance on preparing a standout university application, including personal statements, references, and portfolio requirements.',
+      date: 'Mar 28, 2025',
       category: 'Admission Tips',
-      image: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      author: 'Education Team'
+      image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      author: 'STEPS Education Team'
     },
     {
       id: 3,
-      title: 'How to Choose the Right University and Course',
-      excerpt: 'Factors to consider when selecting your university and course to ensure it aligns with your career goals.',
-      date: 'Sep 12, 2023',
-      category: 'Career Guidance',
-      image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      author: 'Education Team'
+      title: 'Top UK Universities for International Students in 2025',
+      excerpt: 'Comprehensive guide to the best UK universities for international students, featuring rankings, scholarship opportunities, and admission requirements.',
+      date: 'Feb 20, 2025',
+      category: 'University Guide',
+      image: 'https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      author: 'STEPS Education Team'
     }
   ];
 
@@ -70,15 +70,15 @@ const BlogSection = () => {
           className="text-center mb-16"
         >
           <span className="inline-block px-4 py-2 bg-gradient-to-r from-indigo-500/10 to-blue-500/10 dark:from-indigo-800/30 dark:to-blue-800/30 text-indigo-700 dark:text-indigo-300 rounded-full text-sm font-medium mb-4 border border-indigo-100 dark:border-indigo-700">
-            Resources
+            Educational Insights
           </span>
           <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-blue-600 dark:from-indigo-400 dark:to-blue-400 bg-clip-text text-transparent mb-6">
             Latest from Our Blog
           </h2>
           <div className="w-24 h-2 bg-gradient-to-r from-indigo-600 to-blue-500 rounded-full mx-auto mb-8"></div>
           <p className="text-gray-600 dark:text-gray-300 max-w-3xl mx-auto text-lg md:text-xl leading-relaxed">
-            Stay up-to-date with the latest news, tips, and updates on admissions, 
-            visa processes, and educational opportunities.
+            Stay informed with expert advice, current trends, and essential information about UK 
+            university admissions, visa requirements, and career development opportunities.
           </p>
         </motion.div>
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ROUTES } from './constants/routes';
 import useScrollToTop from './useScrollToTop'; // 👈 Import your hook
@@ -10,13 +10,25 @@ import CVJobsPortal from './pages/CVJobsPortal';
 import AdmissionProcess from './pages/AdmissionProcess';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
+import Preloader from './components/layout/Preloader';
 
 function App() {
   useScrollToTop(); // 👈 Call the hook here
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading time or wait for resources to load
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="App">
-      <Navbar />
+      {loading && <Preloader />}
+      <Navbar isVisible={!loading} />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path={ROUTES.CV_JOBS} element={<CVJobsPortal />} />

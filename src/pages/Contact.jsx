@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaClock } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaClock, FaWhatsapp } from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
 
 const Contact = () => {
@@ -193,7 +193,7 @@ const Contact = () => {
                           ? 'border-gray-600 bg-gray-700 text-white' 
                           : 'border-gray-300 focus:border-blue-500 hover:border-blue-300'
                       } focus:outline-none transition duration-200`}
-                      placeholder="+44 123 456 7890"
+                      placeholder="Your phone number"
                     />
                   </motion.div>
                   
@@ -278,7 +278,19 @@ const Contact = () => {
                   <div>
                     <h3 className={`text-lg font-semibold mb-1 ${darkMode ? 'text-white' : 'text-gray-800'}`}>Our Location</h3>
                     <p className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
-                      123 Education Street, London, UK, SW1A 1AA
+                      City Gate House, 246–250 Romford Road, Stratford, London E7 9HZ
+                    </p>
+                  </div>
+                </motion.div>
+                
+                <motion.div variants={itemVariants} className="flex items-start">
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${darkMode ? 'bg-blue-900/40' : 'bg-blue-100'} mr-4`}>
+                    <FaWhatsapp className={`text-xl ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+                  </div>
+                  <div>
+                    <h3 className={`text-lg font-semibold mb-1 ${darkMode ? 'text-white' : 'text-gray-800'}`}>WhatsApp</h3>
+                    <p className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
+                      +447309093612
                     </p>
                   </div>
                 </motion.div>
@@ -290,7 +302,7 @@ const Contact = () => {
                   <div>
                     <h3 className={`text-lg font-semibold mb-1 ${darkMode ? 'text-white' : 'text-gray-800'}`}>Phone</h3>
                     <p className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
-                      +44 (0) 20 1234 5678
+                      +4407988501805
                     </p>
                   </div>
                 </motion.div>
@@ -302,7 +314,7 @@ const Contact = () => {
                   <div>
                     <h3 className={`text-lg font-semibold mb-1 ${darkMode ? 'text-white' : 'text-gray-800'}`}>Email</h3>
                     <p className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
-                      contact@gradway.edu
+                      stepseducationlimited@gmail.com
                     </p>
                   </div>
                 </motion.div>
@@ -331,7 +343,7 @@ const Contact = () => {
               className={`rounded-xl shadow-xl overflow-hidden ${darkMode ? 'bg-gray-800 p-1' : 'bg-white p-1'}`}
             >
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.5369223164077!2d-0.12885932337459862!3d51.5073359129555!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487604c38c8cd1d9%3A0xb78f2474b9a45aa9!2sLondon%20WC2N%205DU!5e0!3m2!1sen!2suk!4v1651234567890!5m2!1sen!2suk"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2481.9548542266766!2d0.0031595!3d51.5452423!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47d8a7a8c0b0b0b3%3A0x4d3f9e3f8172a0eb!2sCity%20Gate%20House%2C%20246-250%20Romford%20Rd%2C%20London%20E7%209HZ!5e0!3m2!1sen!2suk!4v1651234567890!5m2!1sen!2suk"
                 width="100%"
                 height="300"
                 style={{ border: 0 }}

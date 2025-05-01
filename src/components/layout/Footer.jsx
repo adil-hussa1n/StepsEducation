@@ -1,8 +1,9 @@
 import React from 'react';
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaEnvelope, FaPhone, FaMapMarkerAlt, FaGraduationCap } from 'react-icons/fa';
+import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaEnvelope, FaPhone, FaMapMarkerAlt, FaWhatsapp } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 import { useTheme } from '../../context/ThemeContext';
+import StepsLogo from '../../STEPS_transparent-removebg-preview.png';
 
 const Footer = () => {
   const { darkMode } = useTheme();
@@ -35,9 +36,10 @@ const Footer = () => {
   ];
 
   const contactInfo = {
-    address: 'City Gate House, Suite 504, London E7 9HZ',
-    phone: '+44-475-63228537',
-    email: 'info@stepseeducation.co.uk'
+    address: 'City Gate House, 246–250 Romford Road, Stratford, London E7 9HZ',
+    phone: '+4407988501805',
+    whatsapp: '+447309093612',
+    email: 'stepseducationlimited@gmail.com'
   };
 
   // Helper function to render social media icons
@@ -60,10 +62,10 @@ const Footer = () => {
     <footer className={darkMode ? 'bg-gray-800 text-white' : 'bg-blue-900 text-white'}>
       <div className="container mx-auto px-4 py-12">
         {/* Top Section */}
-        <div className="flex flex-col md:flex-row justify-between mb-8">
-          <div className="mb-6 md:mb-0">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <div className="mb-6 md:mb-0 md:col-span-1">
             <div className="flex items-center mb-4">
-              <FaGraduationCap className="text-3xl mr-2" />
+              <img src={StepsLogo} alt="STEPS Education Logo" className="h-16 w-auto mr-2" />
               <h1 className="text-2xl font-bold">
                 STEPS Education
               </h1>
@@ -86,7 +88,7 @@ const Footer = () => {
               ))}
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full md:col-span-3">
             {/* Quick Links */}
             <div>
               <h4 className="text-lg font-semibold mb-4 text-white">Quick Links</h4>
@@ -119,21 +121,27 @@ const Footer = () => {
             <div>
               <h4 className="text-lg font-semibold mb-4 text-white">Contact Us</h4>
               <ul className="space-y-3">
-                <li className="flex items-start">
-                  <FaMapMarkerAlt className="mt-1 mr-3 text-blue-300" />
-                  <span className="text-white">
+                <li className="flex">
+                  <FaMapMarkerAlt className="mt-1 mr-3 flex-shrink-0 text-blue-300" />
+                  <span className="text-white text-sm break-words">
                     {contactInfo.address}
                   </span>
                 </li>
                 <li className="flex items-center">
-                  <FaPhone className="mr-3 text-blue-300" />
-                  <a href={`tel:${contactInfo.phone.replace(/[^0-9+]/g, '')}`} className="text-white hover:text-blue-300 transition-colors">
+                  <FaWhatsapp className="mr-3 flex-shrink-0 text-blue-300" />
+                  <a href={`https://wa.me/${contactInfo.whatsapp.replace(/[^0-9+]/g, '')}`} className="text-white hover:text-blue-300 transition-colors text-sm">
+                    {contactInfo.whatsapp}
+                  </a>
+                </li>
+                <li className="flex items-center">
+                  <FaPhone className="mr-3 flex-shrink-0 text-blue-300" />
+                  <a href={`tel:${contactInfo.phone.replace(/[^0-9+]/g, '')}`} className="text-white hover:text-blue-300 transition-colors text-sm">
                     {contactInfo.phone}
                   </a>
                 </li>
                 <li className="flex items-center">
-                  <FaEnvelope className="mr-3 text-blue-300" />
-                  <a href={`mailto:${contactInfo.email}`} className="text-white hover:text-blue-300 transition-colors">
+                  <FaEnvelope className="mr-3 flex-shrink-0 text-blue-300" />
+                  <a href={`mailto:${contactInfo.email}`} className="text-white hover:text-blue-300 transition-colors text-sm">
                     {contactInfo.email}
                   </a>
                 </li>
@@ -156,4 +164,4 @@ const Footer = () => {
   );
 };
 
-export default Footer; 
+export default Footer;

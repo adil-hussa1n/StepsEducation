@@ -158,7 +158,7 @@ const ContactForm = ({ services = [], onSubmitSuccess }) => {
                 ? 'border-red-300 dark:border-red-700 focus:border-red-500 dark:focus:border-red-500 focus:ring-red-500 dark:focus:ring-red-500' 
                 : 'border-gray-300 dark:border-gray-600 focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-indigo-500 dark:focus:ring-indigo-500'
             } focus:outline-none focus:ring-2 focus:ring-opacity-50 transition duration-150 ease-in-out bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100`}
-            placeholder="+44 123 456 7890"
+            placeholder="+447309093612 / 07988501805"
           />
           {errors.phone && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.phone}</p>}
         </div>

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTheme } from '../../context/ThemeContext';
 import ThemeToggle from '../common/ThemeToggle';
+import StepsLogo from '../../STEPS_transparent-removebg-preview.png';
 
 const Navbar = ({ isVisible = true }) => {
   const { themeObject } = useTheme();
@@ -31,15 +32,14 @@ const Navbar = ({ isVisible = true }) => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <motion.span 
+            <motion.img 
+              src={StepsLogo} 
+              alt="STEPS Education Logo" 
+              className="h-24 w-auto" 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
-              className="text-2xl font-bold"
-            >
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-500">STEPS</span>
-              <span className="text-gray-700 dark:text-gray-200 font-normal text-lg">Education</span>
-            </motion.span>
+            />
           </Link>
           
           {/* Desktop Navigation */}
@@ -123,13 +123,13 @@ const Navbar = ({ isVisible = true }) => {
                 <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
                 <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
               </svg>
-              info@stepseeducation.co.uk
+              stepseeducationlimited@gmail.com
             </span>
             <span className="flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
               </svg>
-              +44-475-63228537
+              +4407988501805
             </span>
           </div>
           <div>
