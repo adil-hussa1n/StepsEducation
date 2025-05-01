@@ -312,12 +312,85 @@ const CVJobsPortal = () => {
           </div>
           
           <div className={`rounded-2xl shadow-xl p-8 ${darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-100 hover:shadow-2xl transition-shadow duration-300'}`}>
-            <div className="text-center py-16">
-              <FaSearch className={`mx-auto text-5xl mb-6 ${darkMode ? 'text-blue-400/50' : 'text-indigo-300'}`} />
-              <h4 className={`text-2xl font-bold mb-3 ${darkMode ? 'text-white' : 'text-gray-800'}`}>Job Board Coming Soon</h4>
-              <p className={`max-w-lg mx-auto mb-8 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                We're currently building our job opportunities board. Submit your CV now to get early access
-                and be among the first to apply when positions become available.
+            <div className="pb-8 mb-8 border-b ${darkMode ? 'border-gray-700' : 'border-gray-100'}">
+              <h4 className={`text-2xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-800'}`}>Available Positions</h4>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Marketing Executive */}
+                <div className={`rounded-xl p-6 transition-all hover:transform hover:-translate-y-1 cursor-pointer ${darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-indigo-50 hover:bg-indigo-100'}`}>
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 ${darkMode ? 'bg-blue-900/40' : 'bg-indigo-200'}`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className={`h-6 w-6 ${darkMode ? 'text-blue-300' : 'text-indigo-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+                    </svg>
+                  </div>
+                  <h5 className={`text-xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>Marketing Executive</h5>
+                  <p className={`mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Drive marketing campaigns and strategies for international student recruitment.</p>
+                  <div className={`mb-4 space-y-1 text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    <p><span className="font-medium">Facility:</span> Available</p>
+                    <p><span className="font-medium">Salary:</span> Competitive</p>
+                    <p><span className="font-medium">Sponsorship:</span> Available for suitable applicants</p>
+                  </div>
+                  <a href="#cv-form" className={`inline-flex items-center font-medium ${darkMode ? 'text-blue-400' : 'text-indigo-600'}`}>
+                    Apply Now
+                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </a>
+                </div>
+
+                {/* Admin Manager */}
+                <div className={`rounded-xl p-6 transition-all hover:transform hover:-translate-y-1 cursor-pointer ${darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-indigo-50 hover:bg-indigo-100'}`}>
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 ${darkMode ? 'bg-blue-900/40' : 'bg-indigo-200'}`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className={`h-6 w-6 ${darkMode ? 'text-blue-300' : 'text-indigo-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                  </div>
+                  <h5 className={`text-xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>Admin Manager</h5>
+                  <p className={`mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Oversee administrative operations and ensure efficient workflow processes.</p>
+                  <div className={`mb-4 space-y-1 text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    <p><span className="font-medium">Facility:</span> Available</p>
+                    <p><span className="font-medium">Salary:</span> Competitive</p>
+                    <p><span className="font-medium">Sponsorship:</span> Available for suitable applicants</p>
+                  </div>
+                  <a href="#cv-form" className={`inline-flex items-center font-medium ${darkMode ? 'text-blue-400' : 'text-indigo-600'}`}>
+                    Apply Now
+                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </a>
+                </div>
+
+                {/* Development Manager */}
+                <div className={`rounded-xl p-6 transition-all hover:transform hover:-translate-y-1 cursor-pointer ${darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-indigo-50 hover:bg-indigo-100'}`}>
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 ${darkMode ? 'bg-blue-900/40' : 'bg-indigo-200'}`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className={`h-6 w-6 ${darkMode ? 'text-blue-300' : 'text-indigo-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                    </svg>
+                  </div>
+                  <h5 className={`text-xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>Development Manager</h5>
+                  <p className={`mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Lead strategic development initiatives and partnerships with educational institutions.</p>
+                  <div className={`mb-4 space-y-1 text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    <p><span className="font-medium">Facility:</span> Available</p>
+                    <p><span className="font-medium">Salary:</span> Competitive</p>
+                    <p><span className="font-medium">Sponsorship:</span> Available for suitable applicants</p>
+                  </div>
+                  <a href="#cv-form" className={`inline-flex items-center font-medium ${darkMode ? 'text-blue-400' : 'text-indigo-600'}`}>
+                    Apply Now
+                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+            
+            <div className="text-center">
+              <FaSearch className={`mx-auto text-4xl mb-6 ${darkMode ? 'text-blue-400/50' : 'text-indigo-300'}`} />
+              <h4 className={`text-xl font-bold mb-3 ${darkMode ? 'text-white' : 'text-gray-800'}`}>More Positions Coming Soon</h4>
+              <p className={`max-w-lg mx-auto mb-6 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                We're expanding our job opportunities board. Submit your CV now to get early access
+                and be among the first to apply when new positions become available.
               </p>
               <a href="#cv-form" className={`inline-block px-6 py-3 font-semibold rounded-xl transition-all ${
                 darkMode ? 'bg-blue-900/40 text-blue-300 hover:bg-blue-900/60' : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'
