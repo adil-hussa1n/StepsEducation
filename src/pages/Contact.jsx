@@ -314,7 +314,7 @@ const Contact = () => {
                   <div>
                     <h3 className={`text-lg font-semibold mb-1 ${darkMode ? 'text-white' : 'text-gray-800'}`}>Email</h3>
                     <p className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
-                      stepseducationlimited@gmail.com
+                      info@stepseducation.co.uk
                     </p>
                   </div>
                 </motion.div>

@@ -39,7 +39,7 @@ const Footer = () => {
     address: 'City Gate House, 246–250 Romford Road, Stratford, London E7 9HZ',
     phone: '+4407988501805',
     whatsapp: '+447309093612',
-    email: 'stepseducationlimited@gmail.com'
+    email: 'info@stepseducation.co.uk'
   };
 
   // Helper function to render social media icons
