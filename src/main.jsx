@@ -4,6 +4,10 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './index.css';
 import { ThemeProvider } from './context/ThemeContext';
+import { initEmailJS } from './utils/emailjs';
+
+// Initialize EmailJS
+initEmailJS();
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

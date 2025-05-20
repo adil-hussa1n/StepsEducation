@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaUpload, FaFileAlt, FaSearch, FaBriefcase } from 'react-icons/fa';
+import { FaUpload, FaFileAlt, FaSearch, FaBriefcase, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
+import { submitCVWithFile } from '../utils/cvSubmission';
 import { useTheme } from '../context/ThemeContext';
 
 const CVJobsPortal = () => {
@@ -16,6 +17,8 @@ const CVJobsPortal = () => {
   
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
+  const [fileUploadStatus, setFileUploadStatus] = useState({ uploading: false, progress: 0, fileName: '' });
   
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,35 +26,98 @@ const CVJobsPortal = () => {
   };
   
   const handleFileChange = (e) => {
-    setFormData({ ...formData, cvFile: e.target.files[0] });
+    const file = e.target.files[0];
+    
+    // Validate file type and size
+    if (file) {
+      const fileType = file.type;
+      const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      const fileSize = file.size / 1024 / 1024; // in MB
+      
+      if (!validTypes.includes(fileType)) {
+        setError('Please upload a PDF or Word document');
+        return;
+      }
+      
+      if (fileSize > 5) {
+        setError('File size should not exceed 5MB');
+        return;
+      }
+      
+      setError('');
+      setFileUploadStatus({ uploading: false, progress: 0, fileName: file.name });
+      setFormData({ ...formData, cvFile: file });
+    }
   };
   
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
+    setError('');
     
-    // Simulate form submission
-    setTimeout(() => {
+    // Validate file is attached
+    if (!formData.cvFile) {
+      setError('Please attach your CV file');
       setSubmitting(false);
-      setSubmitted(true);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        education: '',
-        experience: '',
-        cvFile: null,
-      });
+      return;
+    }
+    
+    try {
+      // Update file upload status
+      setFileUploadStatus(prev => ({ ...prev, uploading: true }));
       
-      // Reset the file input
-      const fileInput = document.getElementById('cvFile');
-      if (fileInput) fileInput.value = '';
+      // Submit CV with file attachment using EmailJS and Firebase with progress tracking
+      const result = await submitCVWithFile(
+        formData, 
+        formData.cvFile,
+        // Progress callback
+        (progress) => {
+          setFileUploadStatus(prev => ({ ...prev, progress }));
+        }
+      );
       
-      // Reset submitted status after 5 seconds
-      setTimeout(() => {
-        setSubmitted(false);
-      }, 5000);
-    }, 1500);
+      if (result.success) {
+        // Handle successful submission
+        setSubmitted(true);
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          education: '',
+          experience: '',
+          cvFile: null,
+        });
+        
+        // Reset the file input
+        const fileInput = document.getElementById('cvFile');
+        if (fileInput) fileInput.value = '';
+        
+        // Check if the submission had a CORS error but still sent the email
+        const hadCorsError = result.corsError || false;
+        
+        // Reset submitted status after 8 seconds
+        setTimeout(() => {
+          setSubmitted(false);
+        }, 8000);
+        
+        // If there was a CORS error but the email was sent, show a special success message
+        if (hadCorsError) {
+          // This will be handled in the success message display
+        }
+      } else {
+        // Handle error
+        if (result.error && result.error.includes('CORS')) {
+          setError('Your CV information was submitted, but the file upload failed due to a network issue. Please send your CV directly to contact@stepseducation.com');
+        } else {
+          setError(result.error || 'Failed to submit CV. Please try again.');
+        }
+      }
+    } catch (err) {
+      console.error('Error submitting CV:', err);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
   
   const resources = [
@@ -132,11 +198,27 @@ const CVJobsPortal = () => {
             {submitted ? (
               <div className={`p-5 rounded-xl mb-8 ${darkMode ? 'bg-green-900/30 text-green-300 border border-green-800' : 'bg-green-50 text-green-700 border border-green-100'}`}>
                 <h4 className="text-lg font-bold mb-1">Thank you!</h4>
-                <p>Your CV has been successfully submitted. Our team will review it and contact you soon.</p>
+                <p>Your CV information has been successfully submitted. Our team will review it and contact you soon.</p>
+                {fileUploadStatus.corsError && (
+                  <div className="mt-3 p-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800">
+                    <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                      <strong>Note:</strong> Due to a technical limitation, we couldn't upload your CV file directly. 
+                      Please send your CV to <a href="mailto:contact@stepseducation.com" className="underline font-medium">contact@stepseducation.com</a> with your name in the subject line.
+                    </p>
+                  </div>
+                )}
               </div>
             ) : null}
             
             <form onSubmit={handleSubmit}>
+              {error && (
+                <div className={`p-4 mb-6 rounded-lg ${darkMode ? 'bg-red-900/30 border border-red-800' : 'bg-red-50 border border-red-200'}`}>
+                  <p className={`flex items-center ${darkMode ? 'text-red-300' : 'text-red-600'}`}>
+                    <FaExclamationCircle className="mr-2" />
+                    {error}
+                  </p>
+                </div>
+              )}
               <div className="mb-5">
                 <label htmlFor="name" className={`block font-medium mb-2 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Full Name*</label>
                 <input
@@ -236,15 +318,43 @@ const CVJobsPortal = () => {
                 </div>
               </div>
               
-              <button
-                type="submit"
-                disabled={submitting}
-                className={`w-full px-6 py-4 bg-gradient-to-r from-indigo-600 to-blue-500 text-white font-semibold rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl ${
-                  submitting ? 'opacity-70 cursor-not-allowed' : ''
-                }`}
-              >
-                {submitting ? 'Submitting...' : 'Submit CV'}
-              </button>
+              {/* File Upload Progress Bar */}
+              {fileUploadStatus.uploading && (
+                <div className="mb-6">
+                  <div className="flex justify-between mb-1">
+                    <span className={`text-sm ${darkMode ? 'text-blue-300' : 'text-blue-600'}`}>
+                      Uploading {fileUploadStatus.fileName}...
+                    </span>
+                    <span className={`text-sm ${darkMode ? 'text-blue-300' : 'text-blue-600'}`}>
+                      {Math.round(fileUploadStatus.progress)}%
+                    </span>
+                  </div>
+                  <div className={`w-full h-2 rounded-full ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                    <div 
+                      className="h-full rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-300" 
+                      style={{ width: `${fileUploadStatus.progress}%` }}
+                    ></div>
+                  </div>
+                </div>
+              )}
+              
+              <div className="mt-8">
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className={`w-full py-3 px-6 rounded-xl font-medium text-white transition-all ${submitting ? 'opacity-70 cursor-not-allowed' : 'hover:shadow-lg'} ${darkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gradient-to-r from-indigo-600 to-blue-500 hover:from-indigo-700 hover:to-blue-600'}`}
+                >
+                  {submitting ? (
+                    <span className="flex items-center justify-center">
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      {fileUploadStatus.uploading ? 'Uploading...' : 'Processing...'}
+                    </span>
+                  ) : 'Submit CV'}
+                </button>
+              </div>
             </form>
           </motion.div>
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaClock, FaWhatsapp } from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
+import { sendEmail } from '../utils/emailjs';
 
 const Contact = () => {
   const { darkMode } = useTheme();
@@ -36,20 +37,43 @@ const Contact = () => {
     return errors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = validateForm();
     if (Object.keys(errors).length === 0) {
-      // Form submission logic would go here
       console.log("Form submitted:", formData);
-      setFormSubmitted(true);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        subject: '',
-        message: '',
-      });
+      
+      try {
+        // Prepare email parameters
+        const templateParams = {
+          user_name: formData.name,
+          user_email: formData.email,
+          user_phone: formData.phone,
+          subject: formData.subject,
+          message: formData.message
+        };
+        
+        // Send email using EmailJS
+        const response = await sendEmail(templateParams);
+        
+        if (response.success) {
+          console.log('Email sent successfully:', response.result);
+          setFormSubmitted(true);
+          setFormData({
+            name: '',
+            email: '',
+            phone: '',
+            subject: '',
+            message: '',
+          });
+        } else {
+          console.error('Failed to send email:', response.error);
+          setFormErrors({ submit: response.error.text || 'Failed to send email. Please try again.' });
+        }
+      } catch (error) {
+        console.error('Error sending email:', error);
+        setFormErrors({ submit: 'An unexpected error occurred. Please try again.' });
+      }
     } else {
       setFormErrors(errors);
     }
@@ -130,6 +154,11 @@ const Contact = () => {
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit}>
+                {formErrors.submit && (
+                  <div className="p-3 mb-4 rounded-lg bg-red-100 dark:bg-red-900 border border-red-200 dark:border-red-800">
+                    <p className="text-red-700 dark:text-red-300">{formErrors.submit}</p>
+                  </div>
+                )}
                 <div className="grid md:grid-cols-2 gap-4 mb-4">
                   <motion.div variants={itemVariants} className="mb-4">
                     <label className={`block mb-2 font-medium ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>

@@ -1,0 +1,10 @@
+{
+  "storage": {
+    "rules": "storage.rules",
+    "cors": [{
+      "origin": ["http://localhost:5173", "https://stepseducation-4f796.web.app"],
+      "method": ["GET", "POST", "PUT", "DELETE", "HEAD"],
+      "maxAgeSeconds": 3600
+    }]
+  }
+}

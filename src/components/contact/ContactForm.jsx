@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import emailjs from '@emailjs/browser';
 import { motion } from 'framer-motion';
+import { EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, EMAILJS_PUBLIC_KEY } from '../../utils/emailjs';
 
 const ContactForm = ({ services = [], onSubmitSuccess }) => {
+  const form = useRef();
+  
+  // Use EmailJS configuration from the centralized utility file
+  // This ensures consistency across the application
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -15,17 +21,28 @@ const ContactForm = ({ services = [], onSubmitSuccess }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
+    // Get the corresponding state field based on the input name
+    let stateField;
+    if (name === 'user_name') stateField = 'name';
+    else if (name === 'user_email') stateField = 'email';
+    else if (name === 'user_phone') stateField = 'phone';
+    else if (name === 'user_service') stateField = 'service';
+    else stateField = name;
+    
+    console.log(`Field changed: ${name} => ${stateField} = ${value}`);
+    
     setFormData(prevState => ({
       ...prevState,
-      [name]: value
+      [stateField]: value
     }));
     
     // Clear error for this field if it exists
-    if (errors[name]) {
+    if (errors[stateField]) {
       setErrors({
         ...errors,
-        [name]: ''
-      });
+        [stateField]: ''
+      }); // Added missing closing parenthesis
     }
   };
 
@@ -60,17 +77,57 @@ const ContactForm = ({ services = [], onSubmitSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Form submitted');
     
     if (validateForm()) {
       setIsSubmitting(true);
+      console.log('Form validated, preparing to send email directly with EmailJS');
       
-      // Simulate API call
-      setTimeout(() => {
+      try {
+        // Ensure EmailJS is initialized
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+        
+        // Prepare template parameters for EmailJS
+        const templateParams = {
+          from_name: formData.name,
+          reply_to: formData.email,
+          to_name: 'Steps Education Team',
+          user_name: formData.name,
+          user_email: formData.email,
+          user_phone: formData.phone,
+          user_service: formData.service,
+          message: formData.message
+        };
+        
+        console.log('Sending email with EmailJS...');
+        console.log('Service ID:', EMAILJS_SERVICE_ID);
+        console.log('Template ID:', EMAILJS_TEMPLATE_ID);
+        console.log('Parameters:', templateParams);
+        
+        // Send email directly using EmailJS
+        const result = await emailjs.send(
+          EMAILJS_SERVICE_ID,
+          EMAILJS_TEMPLATE_ID,
+          templateParams
+        );
+        
+        console.log('EmailJS Response:', result);
+        
+        // Handle success
         setIsSubmitting(false);
+        setSubmitted(true);
         if (onSubmitSuccess) {
           onSubmitSuccess();
         }
-      }, 1500);
+      } catch (error) {
+        // Handle error
+        console.error('EmailJS Error:', error);
+        setIsSubmitting(false);
+        setErrors(prev => ({
+          ...prev,
+          submit: `Failed to send message: ${error?.text || 'Unknown error'}. Please try again.`
+        }));
+      }
     }
   };
 
@@ -100,7 +157,7 @@ const ContactForm = ({ services = [], onSubmitSuccess }) => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form ref={form} onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -109,7 +166,7 @@ const ContactForm = ({ services = [], onSubmitSuccess }) => {
           <input
             type="text"
             id="name"
-            name="name"
+            name="user_name"
             value={formData.name}
             onChange={handleChange}
             className={`w-full px-4 py-3 rounded-xl border ${
@@ -128,7 +185,7 @@ const ContactForm = ({ services = [], onSubmitSuccess }) => {
           <input
             type="email"
             id="email"
-            name="email"
+            name="user_email"
             value={formData.email}
             onChange={handleChange}
             className={`w-full px-4 py-3 rounded-xl border ${
@@ -150,7 +207,7 @@ const ContactForm = ({ services = [], onSubmitSuccess }) => {
           <input
             type="tel"
             id="phone"
-            name="phone"
+            name="user_phone"
             value={formData.phone}
             onChange={handleChange}
             className={`w-full px-4 py-3 rounded-xl border ${
@@ -168,7 +225,7 @@ const ContactForm = ({ services = [], onSubmitSuccess }) => {
           </label>
           <select
             id="service"
-            name="service"
+            name="user_service"
             value={formData.service}
             onChange={handleChange}
             className={`w-full px-4 py-3 rounded-xl border ${
@@ -219,6 +276,12 @@ const ContactForm = ({ services = [], onSubmitSuccess }) => {
         ></textarea>
         {errors.message && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.message}</p>}
       </div>
+
+      {errors.submit && (
+        <div className="p-3 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-lg">
+          {errors.submit}
+        </div>
+      )}
 
       <div>
         <motion.button
