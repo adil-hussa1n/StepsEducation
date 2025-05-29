@@ -8,5 +8,74 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+  
+  <!-- Development mode CV file download handler -->
+  <script>
+    // Check if we're in development mode
+    const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    
+    if (isDevelopment) {
+      // Function to handle file downloads based on URL parameters
+      function handleFileDownloads() {
+        // Check if there's a download parameter in the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const downloadId = urlParams.get('download');
+        
+        if (downloadId) {
+          console.log('Download request detected for:', downloadId);
+          
+          // Try to find the element with this ID
+          const downloadElement = document.getElementById(downloadId);
+          
+          if (downloadElement && downloadElement.tagName === 'A') {
+            console.log('Found download element, triggering download...');
+            // Trigger the download
+            downloadElement.click();
+            
+            // Clean up the URL
+            const newUrl = window.location.pathname + 
+                          window.location.search.replace(/[?&]download=[^&]+/, '') +
+                          window.location.hash;
+            window.history.replaceState({}, document.title, newUrl);
+          } else {
+            // Check saved URLs in localStorage
+            try {
+              const savedUrls = JSON.parse(localStorage.getItem('tempFileUrls') || '{}');
+              let foundFile = false;
+              
+              Object.entries(savedUrls).forEach(([filename, fileData]) => {
+                if (downloadId.includes(filename.replace(/\s+/g, '_'))) {
+                  console.log('Found matching file in storage:', filename);
+                  foundFile = true;
+                  
+                  // Create temporary download link
+                  const a = document.createElement('a');
+                  a.href = fileData.url;
+                  a.download = filename;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                }
+              });
+              
+              if (!foundFile) {
+                console.warn('Download element not found:', downloadId);
+              }
+            } catch (error) {
+              console.error('Error accessing saved files:', error);
+            }
+          }
+        }
+      }
+      
+      // Run on page load
+      window.addEventListener('DOMContentLoaded', handleFileDownloads);
+      
+      // Also run now in case the DOM is already loaded
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(handleFileDownloads, 1);
+      }
+    }
+  </script>
   </body>
 </html>
