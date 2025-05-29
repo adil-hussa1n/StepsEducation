@@ -69,8 +69,8 @@ const CVJobsPortal = () => {
         await new Promise(resolve => setTimeout(resolve, 500));
         setFileUploadStatus(prev => ({ ...prev, progress: 50 }));
         
-        // Create a mock download URL with file information
-        const mockDownloadUrl = `https://stepseducation-4f796.firebasestorage.googleapis.com/mock/${Date.now()}_${file.name}?alt=media&token=mock-token`;
+        // In development mode, create a user-friendly message instead of a mock URL
+        const mockDownloadUrl = `[Development Mode] CV File: ${file.name} (${Math.round(file.size/1024)} KB) - In production, a real download link will be provided.`;
         
         await new Promise(resolve => setTimeout(resolve, 500));
         setFileUploadStatus(prev => ({ ...prev, progress: 100 }));
@@ -98,8 +98,8 @@ const CVJobsPortal = () => {
         return downloadURL;
       } catch (uploadError) {
         console.error('Firebase upload failed, using fallback:', uploadError);
-        // Create a fallback URL with file information
-        const fallbackUrl = `https://stepseducation-4f796.firebasestorage.googleapis.com/fallback/${Date.now()}_${file.name}?alt=media&token=fallback-token`;
+        // Create a user-friendly fallback message
+        const fallbackUrl = `[File Upload Issue] CV File: ${file.name} (${Math.round(file.size/1024)} KB) - Please ask the applicant to send their CV separately.`;
         return fallbackUrl;
       }
     } catch (error) {
