@@ -124,12 +124,12 @@ const CVJobsPortal = () => {
           user_phone: formData.phone || 'Not provided',
           education: formData.education || 'Not specified',
           experience: formData.experience || 'Not specified',
-          // Use both parameter names for compatibility
+          // Include file information
           cvFile: fileUrl,
           cv_file: fileUrl,
           cv_download_link: fileUrl,
-          // Format a nice HTML message with a download link
-          message: `CV Submission from ${formData.name}\n\nEducation: ${formData.education || 'Not specified'}\nExperience: ${formData.experience || 'Not specified'}\n\nCV Download Link: ${fileUrl}`
+          // Format a detailed message with file information
+          message: `CV Submission from ${formData.name}\n\nEducation: ${formData.education || 'Not specified'}\nExperience: ${formData.experience || 'Not specified'}\n\nFile Information: ${fileUrl}\n\nNote: Please ask the applicant to send their CV directly via email as well.`
         };
         
         console.log('Sending email with direct method...');

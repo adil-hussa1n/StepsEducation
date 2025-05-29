@@ -20,19 +20,17 @@ const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 
 /**
- * Generate a public URL for a file without uploading it
+ * Generate a descriptive message for a file without uploading it
  * This is a workaround for CORS issues in development and production
- * @param {File} file - The file to generate a URL for
- * @returns {string} - A URL that describes the file
+ * @param {File} file - The file to generate a message for
+ * @returns {string} - A descriptive message about the file
  */
 export const generatePublicUrl = (file) => {
-  // Create a URL that looks like a Firebase URL but is actually just text
-  // This is for display purposes only and won't actually download the file
-  const timestamp = Date.now();
-  const fileName = encodeURIComponent(file.name);
+  // Create a descriptive message about the file instead of a fake URL
+  // This is honest with users about what's happening
   const fileSize = Math.round(file.size/1024);
   
-  return `https://firebasestorage.googleapis.com/v0/b/stepseducation-4f796.appspot.com/o/cvs%2F${timestamp}_${fileName}?alt=media&token=public-${timestamp}`;
+  return `[CV File: ${file.name} (${fileSize} KB) - The file has been received but is not available for download due to storage configuration. The applicant will need to send their CV separately.]`;
 };
 
 /**
