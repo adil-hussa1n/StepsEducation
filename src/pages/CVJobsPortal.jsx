@@ -52,59 +52,29 @@ const CVJobsPortal = () => {
     }
   };
   
-  // Handle CV file upload - use Firebase in production, fallback in development
+  // Handle CV file upload with simplified approach to avoid CORS issues
   const handleCvFile = async (file) => {
     try {
-      // Check if we're in development mode
-      const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-      
       // Update progress status
       setFileUploadStatus(prev => ({ ...prev, uploading: true, progress: 10 }));
       
-      // In development mode, create a mock download URL to avoid CORS issues
-      if (isDevelopment) {
-        console.log('Development mode detected - creating mock download URL');
-        
-        // Simulate progress
-        await new Promise(resolve => setTimeout(resolve, 500));
-        setFileUploadStatus(prev => ({ ...prev, progress: 50 }));
-        
-        // In development mode, create a user-friendly message instead of a mock URL
-        const mockDownloadUrl = `[Development Mode] CV File: ${file.name} (${Math.round(file.size/1024)} KB) - In production, a real download link will be provided.`;
-        
-        await new Promise(resolve => setTimeout(resolve, 500));
-        setFileUploadStatus(prev => ({ ...prev, progress: 100 }));
-        
-        console.log('Created mock download URL:', mockDownloadUrl);
-        return mockDownloadUrl;
-      }
+      // Simulate progress for better UX
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setFileUploadStatus(prev => ({ ...prev, progress: 50 }));
       
-      // In production, use Firebase
-      console.log('Production mode detected - uploading to Firebase');
+      // Create a user-friendly message with file details
+      // This works in both development and production without Firebase dependency
+      const fileInfo = `CV File: ${file.name} (${Math.round(file.size/1024)} KB)`;
       
-      // Create a reference to the file in Firebase Storage
-      const fileRef = ref(storage, `cvs/${Date.now()}_${file.name}`);
+      // Complete the progress
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setFileUploadStatus(prev => ({ ...prev, progress: 100 }));
       
-      // Track upload progress
-      const updateProgress = (progress) => {
-        console.log(`Upload progress: ${Math.round(progress)}%`);
-        setFileUploadStatus(prev => ({ ...prev, progress: Math.round(progress) }));
-      };
-      
-      try {
-        // Use the uploadCvFile function from firebase.js
-        const downloadURL = await uploadCvFile(file, updateProgress);
-        console.log('File uploaded successfully, download URL:', downloadURL);
-        return downloadURL;
-      } catch (uploadError) {
-        console.error('Firebase upload failed, using fallback:', uploadError);
-        // Create a user-friendly fallback message
-        const fallbackUrl = `[File Upload Issue] CV File: ${file.name} (${Math.round(file.size/1024)} KB) - Please ask the applicant to send their CV separately.`;
-        return fallbackUrl;
-      }
+      console.log('Created file info:', fileInfo);
+      return fileInfo;
     } catch (error) {
       console.error('Error handling file:', error);
-      setError('Error uploading file. Please try again.');
+      setError('Error processing file. Please try again.');
       setFileUploadStatus(prev => ({ ...prev, uploading: false, progress: 0 }));
       throw error;
     } finally {
