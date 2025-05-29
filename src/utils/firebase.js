@@ -16,83 +16,99 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firebase Storage with custom settings
+// Initialize Firebase Storage
 const storage = getStorage(app);
 
 /**
- * Generate a descriptive message for a file without uploading it
- * This is a workaround for CORS issues in development and production
- * @param {File} file - The file to generate a message for
- * @returns {string} - A descriptive message about the file
+ * Create a data URL from a file (works in both development and production)
+ * @param {File} file - The file to create a data URL for
+ * @returns {Promise<string>} - A data URL containing the file content
  */
-export const generatePublicUrl = (file) => {
-  // Create a descriptive message about the file instead of a fake URL
-  // This is honest with users about what's happening
-  const fileSize = Math.round(file.size/1024);
-  
-  return `[CV File: ${file.name} (${fileSize} KB) - The file has been received but is not available for download due to storage configuration. The applicant will need to send their CV separately.]`;
+export const createDataUrl = (file) => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      // This creates a data URL that can be used directly as a download link
+      resolve(reader.result);
+    };
+    reader.readAsDataURL(file);
+  });
 };
 
 /**
- * Upload a CV file to Firebase Storage with improved error handling
+ * Upload a CV file and get a download URL that works in both development and production
  * @param {File} file - The file to upload
  * @param {Function} [progressCallback] - Optional callback for upload progress
- * @returns {Promise<string>} - The download URL for the uploaded file
+ * @returns {Promise<string>} - A URL that can be used to download the file
  */
 export const uploadCvFile = async (file, progressCallback = null) => {
   try {
     // Check if we're in development mode
     const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     
-    // In development mode, don't actually upload to Firebase
+    // Update progress to 20%
+    if (progressCallback) progressCallback(20);
+    
+    // In development mode, create a data URL instead of uploading to Firebase
     if (isDevelopment) {
-      console.log('Development mode detected - skipping actual upload');
+      console.log('Development mode - creating data URL');
       
       // Simulate progress
-      if (progressCallback) {
-        for (let i = 0; i <= 100; i += 20) {
-          progressCallback(i);
-          await new Promise(resolve => setTimeout(resolve, 200));
-        }
-      }
+      if (progressCallback) progressCallback(50);
       
-      // Return a mock URL
-      return generatePublicUrl(file);
+      // Create a data URL from the file
+      const dataUrl = await createDataUrl(file);
+      
+      // Complete progress
+      if (progressCallback) progressCallback(100);
+      
+      console.log('Created data URL for file');
+      return dataUrl;
     }
     
-    // In production, attempt to upload to Firebase
-    const filePath = `cvs/${Date.now()}_${file.name}`;
-    const storageRef = ref(storage, filePath);
-    
-    if (progressCallback) {
-      // Use resumable upload to track progress
-      const uploadTask = uploadBytesResumable(storageRef, file);
+    // In production, try to upload to Firebase first
+    try {
+      console.log('Production mode - uploading to Firebase');
       
-      uploadTask.on('state_changed', 
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          progressCallback(progress);
-        }, 
-        (error) => {
-          console.error('Upload error:', error);
-          // Don't throw, we'll handle this in the catch block
-        }
-      );
+      // Create a unique file path with timestamp to avoid conflicts
+      const timestamp = Date.now();
+      const filePath = `cvs/${timestamp}_${file.name}`;
+      const storageRef = ref(storage, filePath);
       
-      // Wait for the upload to complete
-      await uploadTask;
-    } else {
-      // Simple upload without progress tracking
+      // Update progress to 30%
+      if (progressCallback) progressCallback(30);
+      
+      // Upload the file
       await uploadBytes(storageRef, file);
+      
+      // Update progress to 70%
+      if (progressCallback) progressCallback(70);
+      
+      // Get the download URL
+      const downloadURL = await getDownloadURL(storageRef);
+      
+      // Complete progress
+      if (progressCallback) progressCallback(100);
+      
+      console.log('Firebase upload successful, URL:', downloadURL);
+      return downloadURL;
+    } catch (firebaseError) {
+      console.error('Firebase upload failed, using data URL instead:', firebaseError);
+      
+      // If Firebase upload fails, fall back to data URL
+      if (progressCallback) progressCallback(50);
+      
+      const dataUrl = await createDataUrl(file);
+      
+      if (progressCallback) progressCallback(100);
+      return dataUrl;
     }
-    
-    // Get the download URL
-    const downloadURL = await getDownloadURL(storageRef);
-    return downloadURL;
   } catch (error) {
-    console.error('Error uploading file:', error);
-    // Return a generated URL as fallback
-    return generatePublicUrl(file);
+    console.error('Error handling file:', error);
+    
+    // If all else fails, return a descriptive message
+    const fileSize = Math.round(file.size/1024);
+    return `CV File: ${file.name} (${fileSize} KB) - File processing failed. Please contact support.`;
   }
 };
 

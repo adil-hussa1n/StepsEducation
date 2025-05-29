@@ -113,6 +113,19 @@ const CVJobsPortal = () => {
       }
       
       try {
+        // Check if fileUrl is a data URL (starts with 'data:application/')
+        const isDataUrl = typeof fileUrl === 'string' && fileUrl.startsWith('data:application/');
+        
+        // Create a more user-friendly message based on the URL type
+        let cvMessage;
+        if (isDataUrl) {
+          cvMessage = `CV is attached as a data URL. You can copy and paste this URL into your browser to view the CV.`;
+        } else if (fileUrl.includes('firebasestorage.googleapis.com')) {
+          cvMessage = `CV is available for download at the link below.`;
+        } else {
+          cvMessage = fileUrl; // Use the message directly if it's just text
+        }
+        
         // Prepare email parameters directly
         const emailParams = {
           to_name: 'Steps Education Team',
@@ -129,7 +142,7 @@ const CVJobsPortal = () => {
           cv_file: fileUrl,
           cv_download_link: fileUrl,
           // Format a detailed message with file information
-          message: `CV Submission from ${formData.name}\n\nEducation: ${formData.education || 'Not specified'}\nExperience: ${formData.experience || 'Not specified'}\n\nFile Information: ${fileUrl}\n\nNote: Please ask the applicant to send their CV directly via email as well.`
+          message: `CV Submission from ${formData.name}\n\nEducation: ${formData.education || 'Not specified'}\nExperience: ${formData.experience || 'Not specified'}\n\nCV Download: ${cvMessage}\n\nDownload Link: ${fileUrl}`
         };
         
         console.log('Sending email with direct method...');
