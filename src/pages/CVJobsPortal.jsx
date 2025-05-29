@@ -52,31 +52,34 @@ const CVJobsPortal = () => {
     }
   };
   
-  // Handle CV file upload with simplified approach to avoid CORS issues
+  // Handle CV file upload using the improved Firebase upload function
   const handleCvFile = async (file) => {
     try {
       // Update progress status
       setFileUploadStatus(prev => ({ ...prev, uploading: true, progress: 10 }));
       
-      // Simulate progress for better UX
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setFileUploadStatus(prev => ({ ...prev, progress: 50 }));
+      // Track upload progress
+      const updateProgress = (progress) => {
+        console.log(`Upload progress: ${Math.round(progress)}%`);
+        setFileUploadStatus(prev => ({ ...prev, progress: Math.round(progress) }));
+      };
       
-      // Create a user-friendly message with file details
-      // This works in both development and production without Firebase dependency
-      const fileInfo = `CV File: ${file.name} (${Math.round(file.size/1024)} KB)`;
+      // Use the improved uploadCvFile function from firebase.js
+      // This function handles both development and production environments
+      // and provides fallbacks for CORS issues
+      const downloadURL = await uploadCvFile(file, updateProgress);
       
-      // Complete the progress
-      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log('File processed, download URL:', downloadURL);
       setFileUploadStatus(prev => ({ ...prev, progress: 100 }));
       
-      console.log('Created file info:', fileInfo);
-      return fileInfo;
+      return downloadURL;
     } catch (error) {
       console.error('Error handling file:', error);
       setError('Error processing file. Please try again.');
       setFileUploadStatus(prev => ({ ...prev, uploading: false, progress: 0 }));
-      throw error;
+      
+      // Return a basic file info string as absolute fallback
+      return `CV File: ${file.name} (${Math.round(file.size/1024)} KB)`;
     } finally {
       setFileUploadStatus(prev => ({ ...prev, progress: 100 }));
     }
