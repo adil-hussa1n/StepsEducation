@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaUpload, FaFileAlt, FaSearch, FaBriefcase, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage, uploadCvFile } from "../utils/firebase";
+import { storage } from "../utils/firebase";
 import emailjs from '@emailjs/browser';
 import { useTheme } from '../context/ThemeContext';
 
@@ -52,36 +52,120 @@ const CVJobsPortal = () => {
     }
   };
   
-  // Handle CV file upload using the improved Firebase upload function
+  // Create a data URL from a file (for development mode)
+  const createDataUrl = (file) => {
+    return new Promise((resolve, reject) => {
+      // Check file size - files over 5MB might cause memory issues with data URLs
+      const fileSizeMB = file.size / (1024 * 1024);
+      if (fileSizeMB > 5) {
+        console.warn('File is too large for data URL creation');
+        resolve(`File information: ${file.name} (${Math.round(file.size/1024)} KB) - Too large for preview`);
+        return;
+      }
+      
+      const reader = new FileReader();
+      
+      reader.onload = (event) => {
+        resolve(event.target.result);
+      };
+      
+      reader.onerror = (error) => {
+        console.error('Error creating data URL:', error);
+        reject(error);
+      };
+      
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Upload CV file to Firebase Storage and get download URL
+  const uploadCvFile = async (file, progressCallback = null) => {
+    try {
+      // Check if we're in development mode
+      const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      
+      // Show initial progress
+      if (progressCallback) progressCallback(20);
+      
+      // In development mode, create data URL to avoid CORS issues
+      if (isDevelopment) {
+        console.log('Development mode - creating data URL (avoiding Firebase upload due to CORS)');
+        
+        // Simulate progress for better UX
+        if (progressCallback) progressCallback(40);
+        await new Promise(resolve => setTimeout(resolve, 300));
+        if (progressCallback) progressCallback(60);
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        try {
+          const dataUrl = await createDataUrl(file);
+          if (progressCallback) progressCallback(100);
+          console.log('Created data URL for file');
+          return dataUrl;
+        } catch (error) {
+          console.error('Error creating data URL:', error);
+          if (progressCallback) progressCallback(100);
+          return `File information: ${file.name} (${Math.round(file.size/1024)} KB)`;
+        }
+      }
+      
+      // In production, upload to Firebase Storage
+      console.log('Uploading file to Firebase Storage');
+      const filePath = `cvs/${Date.now()}_${file.name}`;
+      const storageRef = ref(storage, filePath);
+      
+      // Upload the file
+      if (progressCallback) progressCallback(50);
+      await uploadBytes(storageRef, file);
+      
+      // Get the download URL
+      if (progressCallback) progressCallback(80);
+      const fileUrl = await getDownloadURL(storageRef);
+      
+      // Complete progress
+      if (progressCallback) progressCallback(100);
+      console.log('File uploaded successfully, download URL:', fileUrl);
+      
+      return fileUrl;
+    } catch (error) {
+      console.error('Upload failed:', error);
+      throw new Error('Failed to upload CV. Please try again.');
+    }
+  };
+  
+  // Handle CV file upload using the Firebase upload function
   const handleCvFile = async (file) => {
     try {
       // Update progress status
       setFileUploadStatus(prev => ({ ...prev, uploading: true, progress: 10 }));
       
-      // Track upload progress
       const updateProgress = (progress) => {
         console.log(`Upload progress: ${Math.round(progress)}%`);
         setFileUploadStatus(prev => ({ ...prev, progress: Math.round(progress) }));
       };
       
-      // Use the improved uploadCvFile function from firebase.js
-      // This function handles both development and production environments
-      // and provides fallbacks for CORS issues
-      const downloadURL = await uploadCvFile(file, updateProgress);
+      const fileUrl = await uploadCvFile(file, updateProgress);
       
-      console.log('File processed, download URL:', downloadURL);
       setFileUploadStatus(prev => ({ ...prev, progress: 100 }));
       
-      return downloadURL;
+      // Check if we got a data URL (development mode) or a Firebase URL (production)
+      const isDataUrl = typeof fileUrl === 'string' && fileUrl.startsWith('data:');
+      const isFirebaseUrl = typeof fileUrl === 'string' && fileUrl.includes('firebasestorage.googleapis.com');
+      const isInfoString = typeof fileUrl === 'string' && fileUrl.includes('File information:');
+      
+      console.log('File URL type:', isDataUrl ? 'Data URL' : isFirebaseUrl ? 'Firebase URL' : 'Info String');
+      
+      return {
+        url: fileUrl,
+        isDataUrl,
+        isFirebaseUrl,
+        isInfoString
+      };
     } catch (error) {
-      console.error('Error handling file:', error);
-      setError('Error processing file. Please try again.');
       setFileUploadStatus(prev => ({ ...prev, uploading: false, progress: 0 }));
-      
-      // Return a basic file info string as absolute fallback
-      return `CV File: ${file.name} (${Math.round(file.size/1024)} KB)`;
-    } finally {
-      setFileUploadStatus(prev => ({ ...prev, progress: 100 }));
+      console.error('Error handling CV file:', error);
+      setError('Failed to upload CV. Please try again.');
+      throw error;
     }
   };
 
@@ -102,31 +186,44 @@ const CVJobsPortal = () => {
       setFileUploadStatus(prev => ({ ...prev, uploading: true, progress: 10 }));
       
       // Process the file (upload or create placeholder in development)
-      let fileUrl;
+      let fileResult;
       try {
-        fileUrl = await handleCvFile(formData.cvFile);
-        console.log('File processed successfully, URL:', fileUrl);
+        fileResult = await handleCvFile(formData.cvFile);
+        console.log('File processed successfully:', fileResult);
       } catch (fileError) {
         console.error('Error processing file:', fileError);
         // Use a fallback text instead of failing completely
-        fileUrl = `[Error processing file: ${formData.cvFile.name}]`;
+        fileResult = {
+          url: `CV File: ${formData.cvFile.name} (${Math.round(formData.cvFile.size/1024)} KB) - Processing failed`,
+          isDataUrl: false,
+          isFirebaseUrl: false,
+          isInfoString: true
+        };
       }
       
       try {
-        // Check if fileUrl is a data URL (starts with 'data:application/')
-        const isDataUrl = typeof fileUrl === 'string' && fileUrl.startsWith('data:application/');
+        // Create file information for the email
+        const fileName = formData.cvFile ? formData.cvFile.name : 'CV File';
+        const fileSize = formData.cvFile ? Math.round(formData.cvFile.size/1024) : 0;
+        const fileType = formData.cvFile ? formData.cvFile.type : 'unknown';
         
         // Create a more user-friendly message based on the URL type
         let cvMessage;
-        if (isDataUrl) {
-          cvMessage = `CV is attached as a data URL. You can copy and paste this URL into your browser to view the CV.`;
-        } else if (fileUrl.includes('firebasestorage.googleapis.com')) {
+        let cvDownloadLink;
+        
+        if (fileResult.isDataUrl) {
+          // For data URLs, don't include the full URL in the email as it's too large
+          cvMessage = `CV file "${fileName}" (${fileSize} KB, ${fileType}) was uploaded. Due to size limitations, the file cannot be directly included in this email.`;
+          cvDownloadLink = 'Please contact the applicant directly to request the CV file.';
+        } else if (fileResult.isFirebaseUrl) {
           cvMessage = `CV is available for download at the link below.`;
+          cvDownloadLink = fileResult.url;
         } else {
-          cvMessage = fileUrl; // Use the message directly if it's just text
+          cvMessage = fileResult.url; // Use the message directly if it's just text
+          cvDownloadLink = 'No download link available';
         }
         
-        // Prepare email parameters directly
+        // Prepare email parameters directly - exactly like your other project
         const emailParams = {
           to_name: 'Steps Education Team',
           from_name: formData.name || 'Website Visitor',
@@ -137,24 +234,42 @@ const CVJobsPortal = () => {
           user_phone: formData.phone || 'Not provided',
           education: formData.education || 'Not specified',
           experience: formData.experience || 'Not specified',
-          // Include file information
-          cvFile: fileUrl,
-          cv_file: fileUrl,
-          cv_download_link: fileUrl,
+          
+          // For your other project's template (backward compatibility)
+          cvFile: cvDownloadLink,
+          
+          // For this project's template
+          cv_file_name: fileName,
+          cv_file_size: `${fileSize} KB`,
+          cv_file_type: fileType,
+          cv_download_link: cvDownloadLink,
+          submission_date: new Date().toLocaleDateString(),
+          
           // Format a detailed message with file information
-          message: `CV Submission from ${formData.name}\n\nEducation: ${formData.education || 'Not specified'}\nExperience: ${formData.experience || 'Not specified'}\n\nCV Download: ${cvMessage}\n\nDownload Link: ${fileUrl}`
+          message: `CV Submission from ${formData.name}
+
+Education: ${formData.education || 'Not specified'}
+Experience: ${formData.experience || 'Not specified'}
+
+${cvMessage}`
         };
         
         console.log('Sending email with direct method...');
         
+        // EmailJS constants
+        const EMAILJS_SERVICE_ID = 'service_7g14rgi';
+        const EMAILJS_TEMPLATE_ID = 'template_eaxoyqs';
+        const EMAILJS_PUBLIC_KEY = 'sEomWR6Z3MeDGaE1t';
+        
         // Initialize EmailJS
-        emailjs.init('sEomWR6Z3MeDGaE1t');
+        emailjs.init(EMAILJS_PUBLIC_KEY);
         
         // Send the email using the direct method
         const result = await emailjs.send(
-          'service_7g14rgi', // Your EmailJS service ID
-          'template_eaxoyqs', // Your EmailJS template ID
-          emailParams
+          EMAILJS_SERVICE_ID,
+          EMAILJS_TEMPLATE_ID,
+          emailParams,
+          EMAILJS_PUBLIC_KEY
         );
         
         console.log('Email sent successfully:', result);

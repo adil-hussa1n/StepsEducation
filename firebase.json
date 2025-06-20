@@ -2,9 +2,10 @@
   "storage": {
     "rules": "storage.rules",
     "cors": [{
-      "origin": ["http://localhost:5173", "https://stepseducation-4f796.web.app"],
-      "method": ["GET", "POST", "PUT", "DELETE", "HEAD"],
-      "maxAgeSeconds": 3600
+      "origin": ["http://localhost:5173", "https://stepseducation-4f796.web.app", "https://steps-education.vercel.app", "https://steps-education-*.vercel.app", "https://*.vercel.app", "*"],
+      "method": ["GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"],
+      "maxAgeSeconds": 3600,
+      "responseHeader": ["Content-Type", "Content-Disposition", "Content-Length"]
     }]
   }
 }

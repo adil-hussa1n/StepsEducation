@@ -2,13 +2,22 @@ rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
     match /{allPaths=**} {
-      // Allow access to CV files
-      allow read, write: if request.auth != null || request.origin.matches('http://localhost:5173');
+      // Allow read access to all files
+      allow read;
       
-      match /cvs/{fileName} {
-        // Allow anyone to upload CVs (for development purposes)
-        allow read, write;
-      }
+      // Allow write access with some basic validation
+      allow write: if
+        // File size less than 10MB
+        request.resource.size < 10 * 1024 * 1024 &&
+        // Only certain content types allowed
+        (request.resource.contentType.matches('application/pdf') ||
+         request.resource.contentType.matches('application/msword') ||
+         request.resource.contentType.matches('application/vnd.openxmlformats-officedocument.wordprocessingml.document'));
+    }
+    
+    match /cvs/{fileName} {
+      // Special rules for CV folder - allow all operations
+      allow read, write;
     }
   }
 }
