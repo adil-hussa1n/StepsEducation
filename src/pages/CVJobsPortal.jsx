@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaUpload, FaFileAlt, FaSearch, FaBriefcase, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -192,6 +193,7 @@ const CVJobsPortal = () => {
         console.log('File processed successfully:', fileResult);
       } catch (fileError) {
         console.error('Error processing file:', fileError);
+        setFileUploadStatus(prev => ({ ...prev, corsError: true }));
         // Use a fallback text instead of failing completely
         fileResult = {
           url: `CV File: ${formData.cvFile.name} (${Math.round(formData.cvFile.size/1024)} KB) - Processing failed`,
@@ -292,6 +294,7 @@ ${cvMessage}`
         // Reset submitted status after 8 seconds
         setTimeout(() => {
           setSubmitted(false);
+          setFileUploadStatus({ uploading: false, progress: 0, fileName: '', corsError: false });
         }, 8000);
       } catch (emailError) {
         console.error('Error sending email:', emailError);
@@ -312,21 +315,24 @@ ${cvMessage}`
       title: 'CV Writing Tips',
       description: 'Learn how to create a standout CV that gets noticed by employers',
       icon: <FaFileAlt className={`text-2xl ${darkMode ? 'text-blue-400' : 'text-indigo-600'}`} />,
-      emoji: '📝'
+      emoji: '📝',
+      slug: 'cv'
     },
     {
       id: 2,
       title: 'Job Search Strategies',
       description: 'Effective methods to find and apply for jobs in your field',
       icon: <FaSearch className={`text-2xl ${darkMode ? 'text-blue-400' : 'text-indigo-600'}`} />,
-      emoji: '🔍'
+      emoji: '🔍',
+      slug: 'jobs'
     },
     {
       id: 3,
       title: 'Interview Preparation',
       description: 'Tips and techniques to succeed in job interviews',
       icon: <FaBriefcase className={`text-2xl ${darkMode ? 'text-blue-400' : 'text-indigo-600'}`} />,
-      emoji: '💼'
+      emoji: '💼',
+      slug: 'interview'
     },
   ];
 
@@ -567,11 +573,11 @@ ${cvMessage}`
                     <div>
                       <h4 className={`text-xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>{resource.title}</h4>
                       <p className={darkMode ? 'text-gray-300' : 'text-gray-600'}>{resource.description}</p>
-                      <a href="/resources" className={`inline-block mt-4 font-medium ${
+                      <Link to={`/resources?tab=${resource.slug}`} className={`inline-block mt-4 font-medium ${
                         darkMode ? 'text-blue-400 hover:text-blue-300' : 'text-indigo-600 hover:text-indigo-700'
                       } transition-colors`}>
                         Learn more →
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </motion.div>

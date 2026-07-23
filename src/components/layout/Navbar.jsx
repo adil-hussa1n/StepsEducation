@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTheme } from '../../context/ThemeContext';
 import ThemeToggle from '../common/ThemeToggle';
@@ -9,6 +9,13 @@ const Navbar = ({ isVisible = true }) => {
   const { themeObject } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { pathname } = useLocation();
+
+  const handleLogoClick = () => {
+    if (pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,11 +38,11 @@ const Navbar = ({ isVisible = true }) => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center">
+          <Link to="/" onClick={handleLogoClick} className="flex items-center">
             <motion.img 
               src={StepsLogo} 
               alt="STEPS Education Logo" 
-              className="h-24 w-auto" 
+              className="h-24 w-auto dark:invert-0 dark:hue-rotate-0 invert hue-rotate-180 transition-all duration-300" 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
@@ -141,24 +148,46 @@ const Navbar = ({ isVisible = true }) => {
   );
 };
 
-const NavLink = ({ to, children }) => (
-  <Link
-    to={to}
-    className="text-gray-800 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition-colors relative group"
-  >
-    {children}
-    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-600 to-blue-500 transition-all group-hover:w-full"></span>
-  </Link>
-);
+const NavLink = ({ to, children }) => {
+  const { pathname } = useLocation();
 
-const MobileNavLink = ({ to, children, onClick }) => (
-  <Link
-    to={to}
-    className="block text-gray-800 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition-colors px-4 py-2 hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
-    onClick={onClick}
-  >
-    {children}
-  </Link>
-);
+  const handleClick = () => {
+    if (pathname === to) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <Link
+      to={to}
+      onClick={handleClick}
+      className="text-gray-800 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition-colors relative group"
+    >
+      {children}
+      <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-600 to-blue-500 transition-all group-hover:w-full"></span>
+    </Link>
+  );
+};
+
+const MobileNavLink = ({ to, children, onClick }) => {
+  const { pathname } = useLocation();
+
+  const handleClick = (e) => {
+    if (onClick) onClick(e);
+    if (pathname === to) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <Link
+      to={to}
+      className="block text-gray-800 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition-colors px-4 py-2 hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
+      onClick={handleClick}
+    >
+      {children}
+    </Link>
+  );
+};
 
 export default Navbar;

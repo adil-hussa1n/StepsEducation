@@ -15,6 +15,7 @@ const Contact = () => {
   });
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -42,6 +43,7 @@ const Contact = () => {
     const errors = validateForm();
     if (Object.keys(errors).length === 0) {
       console.log("Form submitted:", formData);
+      setIsSubmitting(true);
       
       try {
         // Prepare email parameters
@@ -73,6 +75,8 @@ const Contact = () => {
       } catch (error) {
         console.error('Error sending email:', error);
         setFormErrors({ submit: 'An unexpected error occurred. Please try again.' });
+      } finally {
+        setIsSubmitting(false);
       }
     } else {
       setFormErrors(errors);
@@ -271,13 +275,24 @@ const Contact = () => {
                 <motion.div variants={itemVariants}>
                   <button
                     type="submit"
+                    disabled={isSubmitting}
                     className={`w-full py-3 px-6 rounded-lg font-medium transition-all ${
+                      isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
+                    } ${
                       darkMode 
                         ? 'bg-blue-600 hover:bg-blue-700 text-white' 
                         : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white'
                     }`}
                   >
-                    Send Message
+                    {isSubmitting ? (
+                      <span className="flex items-center justify-center">
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Sending...
+                      </span>
+                    ) : 'Send Message'}
                   </button>
                 </motion.div>
               </form>
@@ -388,6 +403,7 @@ const Contact = () => {
 
         {/* FAQ Section */}
         <motion.div
+          id="faqs"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.5 }}

@@ -9,6 +9,7 @@ import Contact from './pages/Contact';
 import CVJobsPortal from './pages/CVJobsPortal';
 import AdmissionProcess from './pages/AdmissionProcess';
 import EmailTestPage from './pages/EmailTestPage'; // Import the EmailTest page
+import Resources from './pages/Resources'; // Import the Resources page
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Preloader from './components/layout/Preloader';
@@ -21,7 +22,7 @@ function App() {
     // Simulate loading time or wait for resources to load
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 2500);
+    }, 800);
 
     return () => clearTimeout(timer);
   }, []);
@@ -35,6 +36,7 @@ function App() {
         <Route path={ROUTES.CV_JOBS} element={<CVJobsPortal />} />
         <Route path={ROUTES.CONTACT} element={<Contact />} />
         <Route path={ROUTES.ADMISSION_PROCESS} element={<AdmissionProcess />} />
+        <Route path={ROUTES.RESOURCES} element={<Resources />} />
         <Route path="/email-test" element={<EmailTestPage />} />
       </Routes>
       <Footer />

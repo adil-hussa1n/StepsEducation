@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaFileAlt, FaCheckCircle, FaGraduationCap, FaEnvelope, FaPassport, FaCalendarAlt, FaUser } from "react-icons/fa";
 import AdmissionProcess from "../components/services/AdmissionProcess";
@@ -161,16 +162,16 @@ const AdmissionProcessPage = () => {
             >
               Contact Us
             </a>
-            <a
-              href="#faqs"
-              className={`px-8 py-3 rounded-lg font-medium transition-all ${
+            <Link
+              to="/contact#faqs"
+              className={`px-8 py-3 rounded-lg font-medium transition-all text-center ${
                 darkMode 
                   ? 'bg-gray-700 hover:bg-gray-600 text-white border border-gray-600' 
                   : 'bg-transparent hover:bg-white/10 text-white border border-white'
               }`}
             >
               FAQs
-            </a>
+            </Link>
           </div>
         </motion.div>
       </section>
